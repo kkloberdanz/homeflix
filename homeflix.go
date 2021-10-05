@@ -3,11 +3,28 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"os"
+	"sort"
 	"strings"
 )
 
-var root = flag.String("root", ".", "Define the root filesystem path")
+var roots []string
+
+func pathExists(path string) bool {
+	_, err := os.Stat(path)
+	return !os.IsNotExist(err)
+}
+
+func isDirectory(path string) bool {
+	info, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		return false
+	}
+
+	return info.IsDir()
+}
 
 func handleRoot(w http.ResponseWriter, r *http.Request) {
 	in := strings.TrimPrefix(r.URL.Path, "/")
@@ -17,15 +34,57 @@ func handleRoot(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(msg))
 		return
 	}
-	filename := fmt.Sprintf("%s/%s", *root, in)
-	fmt.Printf("serving: '%s'\n", filename)
-	http.ServeFile(w, r, filename)
+
+	if in == "" {
+		w.Header().Set("Content-Type", "text/html")
+		w.Write([]byte("<pre>\n"))
+		var allFiles []string
+		for _, root := range roots {
+			files, err := ioutil.ReadDir(root)
+			if err != nil {
+				fmt.Printf("error: could not list directory")
+				return
+			}
+
+			for _, f := range files {
+				allFiles = append(allFiles, f.Name())
+			}
+		}
+		sort.Strings(allFiles)
+		for _, name := range allFiles {
+			line := fmt.Sprintf("<a href=\"%s\">%s</a>\n", name, name)
+			for _, root := range roots {
+				path := fmt.Sprintf("%s/%s", root, name)
+				if isDirectory(path) {
+					line = fmt.Sprintf("<a href=\"%s\">%s/</a>\n", name, name)
+				}
+			}
+			fmt.Print(line)
+			w.Write([]byte(line))
+		}
+		w.Write([]byte("</pre>\n"))
+		return
+	}
+
+	for _, root := range roots {
+		filename := fmt.Sprintf("%s/%s", root, in)
+		if isDirectory(filename) {
+			fmt.Printf("'%s' is a directory\n", filename)
+		}
+		if pathExists(filename) {
+			fmt.Printf("serving: '%s'\n", filename)
+			http.ServeFile(w, r, filename)
+			return
+		}
+	}
+	w.WriteHeader(http.StatusNotFound)
 }
 
 func main() {
 	var port = flag.String("port", "8080", "Define what TCP port to bind to")
-
 	flag.Parse()
+
+	roots = flag.Args()
 
 	address := "0.0.0.0:" + *port
 	http.HandleFunc("/", handleRoot)
