@@ -28,6 +28,36 @@ func isDirectory(path string) bool {
 	return info.IsDir()
 }
 
+func listRoot(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "text/html")
+	w.Write([]byte("<pre>\n"))
+	var allFiles []string
+	for _, root := range roots {
+		files, err := ioutil.ReadDir(root)
+		if err != nil {
+			fmt.Printf("error: could not list directory")
+			return
+		}
+
+		for _, f := range files {
+			allFiles = append(allFiles, f.Name())
+		}
+	}
+	sort.Strings(allFiles)
+	for _, fname := range allFiles {
+		line := fmt.Sprintf("<a href=\"%s\">%s</a>\n", fname, fname)
+		for _, root := range roots {
+			path := fmt.Sprintf("%s/%s", root, fname)
+			if isDirectory(path) {
+				line = fmt.Sprintf("<a href=\"%s\">%s/</a>\n", fname, fname)
+			}
+		}
+		w.Write([]byte(line))
+	}
+	w.Write([]byte("</pre>\n"))
+	return
+}
+
 func handleRoot(w http.ResponseWriter, r *http.Request) {
 	in := strings.TrimPrefix(r.URL.Path, "/")
 	if strings.Contains(in, "..") {
@@ -38,32 +68,7 @@ func handleRoot(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if in == "" {
-		w.Header().Set("Content-Type", "text/html")
-		w.Write([]byte("<pre>\n"))
-		var allFiles []string
-		for _, root := range roots {
-			files, err := ioutil.ReadDir(root)
-			if err != nil {
-				fmt.Printf("error: could not list directory")
-				return
-			}
-
-			for _, f := range files {
-				allFiles = append(allFiles, f.Name())
-			}
-		}
-		sort.Strings(allFiles)
-		for _, name := range allFiles {
-			line := fmt.Sprintf("<a href=\"%s\">%s</a>\n", name, name)
-			for _, root := range roots {
-				path := fmt.Sprintf("%s/%s", root, name)
-				if isDirectory(path) {
-					line = fmt.Sprintf("<a href=\"%s\">%s/</a>\n", name, name)
-				}
-			}
-			w.Write([]byte(line))
-		}
-		w.Write([]byte("</pre>\n"))
+		listRoot(w)
 		return
 	}
 
