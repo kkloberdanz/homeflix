@@ -61,7 +61,6 @@ func handleRoot(w http.ResponseWriter, r *http.Request) {
 					line = fmt.Sprintf("<a href=\"%s\">%s/</a>\n", name, name)
 				}
 			}
-			fmt.Print(line)
 			w.Write([]byte(line))
 		}
 		w.Write([]byte("</pre>\n"))
@@ -70,11 +69,7 @@ func handleRoot(w http.ResponseWriter, r *http.Request) {
 
 	for _, root := range roots {
 		filename := fmt.Sprintf("%s/%s", root, in)
-		if isDirectory(filename) {
-			fmt.Printf("'%s' is a directory\n", filename)
-		}
 		if pathExists(filename) {
-			fmt.Printf("serving: '%s'\n", filename)
 			http.ServeFile(w, r, filename)
 			return
 		}
