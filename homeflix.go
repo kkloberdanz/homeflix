@@ -1,3 +1,5 @@
+// Copyright (c) 2021 Kyle Kloberdanz
+
 package main
 
 import (
@@ -85,6 +87,9 @@ func main() {
 	flag.Parse()
 
 	roots = flag.Args()
+	if len(roots) == 0 {
+		roots = append(roots, ".")
+	}
 
 	address := "0.0.0.0:" + *port
 	http.HandleFunc("/", handleRoot)
