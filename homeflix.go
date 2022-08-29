@@ -30,7 +30,19 @@ func isDirectory(path string) bool {
 
 func listRoot(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "text/html")
-	w.Write([]byte("<pre>\n"))
+	w.Write([]byte(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport"
+     content="width=device-width, initial-scale=1, user-scalable=yes">
+
+  <title>Homeflix</title>
+</head>
+<body>
+<pre>
+`))
 	var allFiles []string
 	for _, root := range roots {
 		files, err := ioutil.ReadDir(root)
@@ -54,7 +66,11 @@ func listRoot(w http.ResponseWriter) {
 		}
 		w.Write([]byte(line))
 	}
-	w.Write([]byte("</pre>\n"))
+	w.Write([]byte(`
+</pre>
+</body>
+</html>
+`))
 	return
 }
 
