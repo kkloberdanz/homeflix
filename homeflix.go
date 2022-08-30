@@ -56,7 +56,11 @@ func listRoot(w http.ResponseWriter) {
 		}
 	}
 	sort.Strings(allFiles)
+	var last string
 	for _, fname := range allFiles {
+		if fname == last {
+			continue
+		}
 		line := fmt.Sprintf("<a href=\"%s\">%s</a>\n", fname, fname)
 		for _, root := range roots {
 			path := fmt.Sprintf("%s/%s", root, fname)
@@ -65,6 +69,7 @@ func listRoot(w http.ResponseWriter) {
 			}
 		}
 		w.Write([]byte(line))
+		last = fname
 	}
 	w.Write([]byte(`
 </pre>
