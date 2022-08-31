@@ -51,8 +51,8 @@ body {
 
 .card {
     background-color: white;
-    margin-top: 20px;
-    padding: 5%;
+    margin-top: 1px;
+    padding: 1%;
 }
 
 </style>
