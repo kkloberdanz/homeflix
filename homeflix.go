@@ -40,6 +40,23 @@ func listRoot(w http.ResponseWriter) {
 
   <title>Homeflix</title>
 </head>
+
+<style type="text/css" media="screen">
+
+body {
+    font-family: sans-serif;
+    padding: 10px;
+    background: #aaaaaa;
+}
+
+.card {
+    background-color: white;
+    margin-top: 20px;
+    padding: 5%;
+}
+
+</style>
+
 <body>
 <pre>
 `))
@@ -61,11 +78,11 @@ func listRoot(w http.ResponseWriter) {
 		if fname == last {
 			continue
 		}
-		line := fmt.Sprintf("<a href=\"%s\">%s</a>\n", fname, fname)
+		line := fmt.Sprintf("<div class=\"card\"> <a href=\"%s\">%s/</a> </div>\n", fname, fname)
 		for _, root := range roots {
 			path := fmt.Sprintf("%s/%s", root, fname)
 			if isDirectory(path) {
-				line = fmt.Sprintf("<a href=\"%s\">%s/</a>\n", fname, fname)
+				line = fmt.Sprintf("<div class=\"card\"> <a href=\"%s\">%s/</a> </div>\n", fname, fname)
 			}
 		}
 		w.Write([]byte(line))
