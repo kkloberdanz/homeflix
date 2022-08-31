@@ -78,7 +78,7 @@ body {
 		if fname == last {
 			continue
 		}
-		line := fmt.Sprintf("<div class=\"card\"> <a href=\"%s\">%s/</a> </div>\n", fname, fname)
+		line := fmt.Sprintf("<div class=\"card\"> <a href=\"%s\">%s</a> </div>\n", fname, fname)
 		for _, root := range roots {
 			path := fmt.Sprintf("%s/%s", root, fname)
 			if isDirectory(path) {
@@ -131,6 +131,8 @@ func main() {
 
 	address := "0.0.0.0:" + *port
 	http.HandleFunc("/", handleRoot)
+
+	fmt.Fprintf(os.Stderr, "serving from %s\n", address)
 	if err := http.ListenAndServe(address, nil); err != nil {
 		panic(err)
 	}
