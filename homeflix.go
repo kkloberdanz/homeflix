@@ -39,6 +39,8 @@ func listRoot(w http.ResponseWriter) {
      content="width=device-width, initial-scale=1, user-scalable=yes">
 
   <title>Homeflix</title>
+  <link rel="shortcut icon"
+    href="http://homeflix.local/favicon.svg">
 </head>
 
 <style type="text/css" media="screen">
