@@ -14,3 +14,7 @@ ps -ef \
 || true
 
 cp homeflix $HOME/bin/homeflix
+
+cd $HOME/movies
+
+./start_homeflix.sh
