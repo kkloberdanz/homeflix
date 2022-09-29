@@ -3,7 +3,7 @@
 set -e
 set -x
 
-go build
+#go build
 
 ps -ef \
 | grep homeflix \
