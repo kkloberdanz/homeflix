@@ -10,6 +10,8 @@ import (
 	"os"
 	"sort"
 	"strings"
+
+	"github.com/kkloberdanz/homeflix/todo"
 )
 
 var roots []string
@@ -60,6 +62,10 @@ body {
 </style>
 
 <body>
+<div>
+    <a href="/todo">Add Todo</a> 
+    <a href="/todos.txt">All Todos</a> 
+</div>
 <pre>
 `))
 	var allFiles []string
@@ -133,6 +139,8 @@ func main() {
 
 	address := "0.0.0.0:" + *port
 	http.HandleFunc("/", handleRoot)
+	http.HandleFunc("/todo", todo.Serve)
+	http.HandleFunc("/todo/post", todo.Post)
 
 	fmt.Fprintf(os.Stderr, "serving from %s\n", address)
 	if err := http.ListenAndServe(address, nil); err != nil {
