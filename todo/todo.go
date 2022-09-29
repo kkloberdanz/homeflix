@@ -60,6 +60,7 @@ func errMsg(err error, w http.ResponseWriter) {
 }
 
 func Post(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(os.Stderr, "%s\n", "Post")
 	defer r.Body.Close()
 	buf, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -90,6 +91,7 @@ func addTodo(todoItem string) error {
 }
 
 func Serve(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(os.Stderr, "%s\n", "Serve")
 	w.Header().Set("Content-Type", "text/html")
 	w.Write([]byte(form))
 }

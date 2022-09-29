@@ -63,8 +63,8 @@ body {
 
 <body>
 <div>
-    <a href="/todo">Add Todo</a> 
-    <a href="/todos.txt">All Todos</a> 
+    |<a href="/todo">Add Todo</a>|
+    |<a href="/todos.txt">All Todos</a>|
 </div>
 <pre>
 `))
